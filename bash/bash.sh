@@ -59,12 +59,12 @@ alias duh1g='du -t 1073741824 -h -d 1 '
 alias duh100m='du -t 104857600 -h -d 1 '
 alias pwdp="readlink -f ."
 
-export -f lf
 alias ld='ls -AlhXdv --color=auto' # show directories
 alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
 function lf() { # find + ls
   find . -maxdepth 1 -name "$@" -type f -exec ls -AlhX {} \;
 }
+export -f lf
 
 # ---------- chmod
 # find requires -L to follow symlinks, so these commands do not follow symlinks.
