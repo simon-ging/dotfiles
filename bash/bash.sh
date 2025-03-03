@@ -90,3 +90,4 @@ alias rsyonlyjson='rsync --partial-dir=.rsync-partial --progress -h -t --include
 alias pj="python3 -m json.tool"
 alias pt="python -m pytest"
 alias ecd='export CUDA_VISIBLE_DEVICES='
+alias bell='sleep 1 ; echo -e "\a"'
