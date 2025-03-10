@@ -1,0 +1,27 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+# default configs: https://github.com/pre-commit/pre-commit-hooks/blob/main/.pre-commit-hooks.yaml
+# https://pre-commit.com/index.html#filtering-files-with-types
+repos:
+    -   repo: https://github.com/psf/black-pre-commit-mirror
+        rev: 25.1.0
+        hooks:
+            -   id: black-jupyter
+                language_version: python3.12
+    -   repo: https://github.com/pecigonzalo/pre-commit-shfmt
+        rev: v2.2.0
+        hooks:
+            -   id: shell-fmt-go
+                args:
+                    - -i
+                    - "2"
+    -   repo: https://github.com/pre-commit/pre-commit-hooks
+        rev: v5.0.0
+        hooks:
+            -   id: trailing-whitespace
+                exclude: (\.txt$|\.md$|LICENSE$)
+            -   id: end-of-file-fixer
+            -   id: check-yaml
+            -   id: check-added-large-files
+            -   id: check-ast
+            -   id: fix-byte-order-marker
