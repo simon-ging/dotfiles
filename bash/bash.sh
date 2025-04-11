@@ -60,6 +60,7 @@ alias duh='du -d 1 -h'
 alias duh1g='du -t 1073741824 -h -d 1 '
 alias duh100m='du -t 104857600 -h -d 1 '
 alias pwdp="readlink -f ."
+alias mactrash='find . -name ".DS_Store" -delete -or -name "__MACOSX" -exec rm -rfv {} +'
 
 alias ld='ls -AlhXdv --color=auto' # show directories
 alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
@@ -103,6 +104,6 @@ alias ecd='export CUDA_VISIBLE_DEVICES='
 alias bell='sleep 1 ; echo -e "\a"'
 
 function killallother() {
-    ps aux | grep "$USER" | grep -v bash | grep -v sshd | grep -v tmux | awk '{print \$2}' | xargs kill -9
+  ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps' | awk '{print $1}' | xargs kill -9
 }
 export -f killallother
