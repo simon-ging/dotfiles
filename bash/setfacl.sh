@@ -54,10 +54,11 @@ sv3_777() {
     targetdir="$1"
     if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
     if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
-    setfacl -R -m u::rwx,g::rwx,o::rwx ${targetdir}
-    setfacl -R -m d:u::rwx,d:g::rwx,d:o::rwx ${targetdir}
     setfacl -bR "${targetdir}"
     setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::rwx,o::rwx ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::rwx,d:o::rwx ${targetdir}
+    getfacl "${targetdir}"
 }
 export -f sv3_777
 
