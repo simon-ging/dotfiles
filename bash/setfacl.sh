@@ -7,6 +7,7 @@ function sv3_readwrite_recurse() {
   if [[ ! -d "${dirtoshare}" ]]; then echo "folder not found: ${dirtoshare}"; return; fi
   setfacl -m u:$(id -u ${otheruser}):rwx ${dirtoshare}
   find ${dirtoshare} -type f -exec setfacl -m u:$(id -u ${otheruser}):rw {} \;
+  find ${dirtoshare} -type d -exec setfacl -m u:$(id -u ${otheruser}):rwx {} \;
   find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u ${otheruser}):rwx {} \;
   find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
   setfacl -m d:u:$(id -u ${otheruser}):rwx ${dirtoshare}
@@ -36,6 +37,7 @@ function sv3_readonly_recurse() {
   find ${dirtoshare} -type f -exec setfacl -m u:$(id -u ${otheruser}):r {} \;
   find ${dirtoshare} -type d -exec setfacl -m u:$(id -u ${otheruser}):rx {} \;
   find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u ${otheruser}):rx {} \;
+  find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
   getfacl ${dirtoshare}
 }
 export -f sv3_readonly_recurse
@@ -58,6 +60,7 @@ sv3_777() {
     setfacl -kR "${targetdir}"
     setfacl -R -m u::rwx,g::rwx,o::rwx ${targetdir}
     setfacl -R -m d:u::rwx,d:g::rwx,d:o::rwx ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
     getfacl "${targetdir}"
 }
 export -f sv3_777

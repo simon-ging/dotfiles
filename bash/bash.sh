@@ -104,6 +104,6 @@ alias ecd='export CUDA_VISIBLE_DEVICES='
 alias bell='sleep 1 ; echo -e "\a"'
 
 function killallother() {
-  ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps' | awk '{print $1}' | xargs kill -9
+  ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps|nvitop' | awk '{print $1}' | xargs kill -9
 }
 export -f killallother
