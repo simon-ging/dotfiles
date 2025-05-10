@@ -48,6 +48,8 @@ function sv3_readonly_norecurse() {
   if [[ "${dirtoshare}" == "" ]]; then echo "syntax: cmd [otheruser] [dirtoshare]"; return; fi
   if [[ ! -d "${dirtoshare}" ]]; then echo "folder not found: ${dirtoshare}"; return; fi
   setfacl -m u:$(id -u ${otheruser}):rx ${dirtoshare}
+  setfacl -m d:u:$(id -u ${otheruser}):rx ${dirtoshare}
+  setfacl -m d:u:$(id -u):rwx ${dirtoshare}
   getfacl ${dirtoshare}
 }
 export -f sv3_readonly_norecurse
@@ -82,5 +84,6 @@ sv3_public_readonly() {
     find "$targetdir" -type d -exec setfacl -m u::rwx,g::rx,o::rx {} \;
     find "$targetdir" -type f -exec setfacl -m u::rw,g::r,o::r {} \;
     find "$targetdir" -type d -exec setfacl -m d:u::rwx,d:g::rx,d:o::rx {} \;
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
 }
 export -f sv3_public_readonly
