@@ -7,7 +7,7 @@ alias squu='squeue -a -u ${USER} -O "${squeue_format_short}"'
 alias squa='squeue -a -O "${squeue_format_short}"'
 
 function squl() {
-    squeue "$@" -O "JobArrayID:.19 ,Partition:.9 ,Name:.20 ,UserName:.8 ,StateCompact:.2 ,TimeUsed:.10 ,NumNodes:.1 ,ReasonList:.10 ,tres-alloc:80" | sed -e "s/gres\/local//g" -e "s/gres\///g"
+    squeue "$@" -O "JobArrayID:.19 ,Partition:.19 ,Name:.20 ,UserName:.8 ,StateCompact:.2 ,TimeUsed:.10 ,NumNodes:.1 ,ReasonList:.10 ,tres-alloc:80" | sed -e "s/gres\/local//g" -e "s/gres\///g"
 }
 alias squlu='squl -u ${USER}'
 alias squla='squl -a'
