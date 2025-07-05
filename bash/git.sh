@@ -61,6 +61,8 @@ function gitpullall() {
 }
 export -f gitpullall
 
+alias gitfilehistory='git log -p --follow -- '
+
 function gitupdateindex() {
   # if the files have been changed e.g. by rsync, but the index is old, update the index
   current_branch=$(git branch --show-current)
