@@ -60,6 +60,7 @@ alias duh='du -d 1 -h'
 alias duh1g='du -t 1073741824 -h -d 1 '
 alias duh100m='du -t 104857600 -h -d 1 '
 alias pwdp="readlink -f ."
+alias mactrash='find . -name ".DS_Store" -delete -or -name "__MACOSX" -exec rm -rfv {} +'
 
 alias ld='ls -AlhXdv --color=auto' # show directories
 alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
@@ -79,14 +80,19 @@ function grepr() {
 # ---------- chmod
 # find requires -L to follow symlinks, so these commands do not follow symlinks.
 # MUST expand the alias with C+M+e before running for it to work.
-alias chmodd='find . -type d -exec chmod u=rwx,go=rx {} \\;'
-alias chmodprivd='find . -type d -exec chmod u=rwx,go= {} \\;'
-alias chmodf='find . -type f -exec chmod u=rw,go=r {} \\;'
-alias chmodprivf='find . -type f -exec chmod u=rw,go= {} \\;'
-alias chmodexec='find . -type f -executable -exec chmod u=rwx,go=rx {} \\;'
-alias chmodprivexec='find . -type f -executable -exec chmod u=rwx,go= {} \\;'
-alias chmodnotexec='find . -type f -not -executable -exec chmod u=rw,go=r {} \\;'
-alias chmodprivnotexec='find . -type f -not -executable -exec chmod u=rw,go= {} \\;'
+alias chmodd755='find . -type d -exec chmod u=rwx,go=rx {} \\;'
+alias chmodd770='find . -type d -exec chmod ug=rwx,o= {} \\;'
+alias chmodd750='find . -type d -exec chmod u=rwx,g=rx,o= {} \\;'
+alias chmodd700='find . -type d -exec chmod u=rwx,go= {} \\;'
+alias chmodf644='find . -type f -exec chmod u=rw,go=r {} \\;'
+alias chmodf660='find . -type f -exec chmod ug=rw,o= {} \\;'
+alias chmodf640='find . -type f -exec chmod u=rw,g=r,o= {} \\;'
+alias chmodf600='find . -type f -exec chmod u=rw,go= {} \\;'
+
+alias chmode755='find . -type f -executable -exec chmod u=rwx,go=rx {} \\;'
+alias chmode700='find . -type f -executable -exec chmod u=rwx,go= {} \\;'
+alias chmodne644='find . -type f -not -executable -exec chmod u=rw,go=r {} \\;'
+alias chmodne600='find . -type f -not -executable -exec chmod u=rw,go= {} \\;'
 
 # ---------- rsync
 # easy rsync: --partial-dir stores and resumes interrupted downloads, works also for big files.
@@ -103,6 +109,6 @@ alias ecd='export CUDA_VISIBLE_DEVICES='
 alias bell='sleep 1 ; echo -e "\a"'
 
 function killallother() {
-    ps aux | grep "$USER" | grep -v bash | grep -v sshd | grep -v tmux | awk '{print \$2}' | xargs kill -9
+  ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps|nvitop' | awk '{print $1}' | xargs kill -9
 }
 export -f killallother
