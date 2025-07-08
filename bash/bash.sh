@@ -45,7 +45,7 @@ alias info_ip3='curl -4 ifconfig.me'
 alias info_pc='lshw'
 alias info_audio="pacmd list-modules"
 alias info_soundcard="sudo dmesg | grep snd"
-alias info_path="echo $PATH | tr ':' '\n'"
+alias info_path='echo ${PATH} | tr ":" "\n"'
 alias info_shutdown="date -d @$(cat /run/systemd/shutdown/scheduled 2>/dev/null | head -n 1 | cut -c6-15) 2>/dev/null || echo no planned shutdown found"
 alias toploop="while true; do top -b -n 1 | head -n 20; sleep 1; done"
 
