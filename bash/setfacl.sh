@@ -1,5 +1,83 @@
 # acl disk permissions
 
+function sv3_777() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::rwx,o::rwx ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::rwx,d:o::rwx ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_777
+
+function sv3_775() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::rwx,o::r-x ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::rwx,d:o::r-x ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_770
+
+function sv3_770() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::rwx,o::--- ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::rwx,d:o::--- ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_770
+
+function sv3_755() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::r-x,o::r-x ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::r-x,d:o::r-x ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_750
+
+function sv3_750() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::r-x,o::--- ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::r-x,d:o::--- ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_750
+
+function sv3_700() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -bR "${targetdir}"
+    setfacl -kR "${targetdir}"
+    setfacl -R -m u::rwx,g::---,o::--- ${targetdir}
+    setfacl -R -m d:u::rwx,d:g::---,d:o::--- ${targetdir}
+    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
+    getfacl "${targetdir}"
+}
+export -f sv3_700
+
 function sv3_readwrite_recurse() {
   otheruser=$1
   dirtoshare=$2
@@ -54,20 +132,8 @@ function sv3_readonly_norecurse() {
 }
 export -f sv3_readonly_norecurse
 
-sv3_777() {
-    targetdir="$1"
-    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
-    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
-    setfacl -bR "${targetdir}"
-    setfacl -kR "${targetdir}"
-    setfacl -R -m u::rwx,g::rwx,o::rwx ${targetdir}
-    setfacl -R -m d:u::rwx,d:g::rwx,d:o::rwx ${targetdir}
-    find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
-    getfacl "${targetdir}"
-}
-export -f sv3_777
 
-sv3_removeperms() {
+function sv3_removeperms() {
     targetdir="$1"
     if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
     if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
@@ -77,7 +143,7 @@ sv3_removeperms() {
 }
 export -f sv3_removeperms
 
-sv3_public_readonly() {
+function sv3_public_readonly_recurse() {
     targetdir="$1"
     if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
     if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
@@ -86,4 +152,14 @@ sv3_public_readonly() {
     find "$targetdir" -type d -exec setfacl -m d:u::rwx,d:g::rx,d:o::rx {} \;
     find ${dirtoshare} -type d -exec setfacl -m d:u:$(id -u):rwx {} \;
 }
-export -f sv3_public_readonly
+export -f sv3_public_readonly_recurse
+
+function sv3_public_readonly_norecurse() {
+    targetdir="$1"
+    if [[ -z "$targetdir" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
+    if [[ ! -d "$targetdir" ]]; then echo "Error: Directory '$targetdir' does not exist." ; return 1 ; fi
+    setfacl -m u::rwx,g::rx,o::rx ${targetdir}
+    setfacl -m d:u::rwx,d:g::rx,d:o::rx ${targetdir}
+    setfacl -m d:u:$(id -u):rwx ${targetdir}
+}
+export -f sv3_public_readonly_norecurse
