@@ -28,3 +28,5 @@ function adaptivetmux() {
 alias t="adaptivetmux"
 alias ta="adaptivetmux a"
 alias tn='adaptivetmux new -s $(hostname)'
+alias tx='adaptivetmux kill-window 2>/dev/null || exit'
+
