@@ -60,7 +60,7 @@ alias duh='du -d 1 -h'
 alias duh1g='du -t 1073741824 -h -d 1 '
 alias duh100m='du -t 104857600 -h -d 1 '
 alias pwdp="readlink -f ."
-alias mactrash='find . -name ".DS_Store" -delete -or -name "__MACOSX" -exec rm -rfv {} +'
+alias mactrash='find . -name ".DS_Store" -delete -or -name "._*" -delete -or -name "__MACOSX" -exec rm -rfv {} +'
 
 alias ld='ls -AlhXdv --color=auto' # show directories
 alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
@@ -121,4 +121,6 @@ alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
    -dDetectDuplicateImages=true -dNOPAUSE -dBATCH -dQUIET \
    -sPAPERSIZE=a4 -dFIXEDMEDIA \
    -sOutputFile=output_smaller.pdf"
+
+alias i3c="ipdb3 -c continue"
 
