@@ -112,3 +112,13 @@ function killallother() {
   ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps|nvitop' | awk '{print $1}' | xargs kill -9
 }
 export -f killallother
+
+alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
+   -dPDFSETTINGS=/ebook \
+   -dDownsampleColorImages=true -dColorImageResolution=150 \
+   -dDownsampleGrayImages=true  -dGrayImageResolution=150 \
+   -dDownsampleMonoImages=true  -dMonoImageResolution=300 \
+   -dDetectDuplicateImages=true -dNOPAUSE -dBATCH -dQUIET \
+   -sPAPERSIZE=a4 -dFIXEDMEDIA \
+   -sOutputFile=output_smaller.pdf"
+
