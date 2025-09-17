@@ -113,4 +113,14 @@ function killallother() {
 }
 export -f killallother
 
+alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
+   -dPDFSETTINGS=/ebook \
+   -dDownsampleColorImages=true -dColorImageResolution=150 \
+   -dDownsampleGrayImages=true  -dGrayImageResolution=150 \
+   -dDownsampleMonoImages=true  -dMonoImageResolution=300 \
+   -dDetectDuplicateImages=true -dNOPAUSE -dBATCH -dQUIET \
+   -sPAPERSIZE=a4 -dFIXEDMEDIA \
+   -sOutputFile=output_smaller.pdf"
+
 alias i3c="ipdb3 -c continue"
+
