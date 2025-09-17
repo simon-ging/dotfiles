@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # various aliases and functions for git
+alias diffbetter="git --no-pager diff --no-index"
 
 # problem: git format strings cannot be expanded with ctrl alt e, because then the quotes, brackets are lost.
 # it either works before or after expansion but never both
@@ -39,7 +40,7 @@ alias gple='git pull --no-edit'
 alias ge='git checkout'
 alias gfe='git fetch -p'
 alias gph='ga ; git commit -m autoupdate ; git push'
-alias gbr='git fetch -p && git branch -a'
+alias gbr='git fetch --all --tags --prune --prune-tags && git branch -a'
 alias gitdiffless='git diff --color=always | less -R'
 function gc() {
   if [[ $# == 0 ]]; then msg="no message"; else msg="$*"; fi
@@ -150,3 +151,15 @@ function gitfork() {
   fi
   cd ..
 }
+export -f gitfork
+
+function gitlastchange() {
+  if [[ $# -lt 1 ]]; then
+    echo "Usage: [filename]"
+    return 1
+  fi  
+  file="$1"
+  git diff $(git rev-list -n 1 HEAD -- $file)^ -- $file
+}
+export -f gitlastchange
+
