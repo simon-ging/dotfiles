@@ -30,3 +30,4 @@ alias ta="adaptivetmux a"
 alias tn='adaptivetmux new -s $(hostname)'
 alias tx='adaptivetmux kill-window 2>/dev/null || exit'
 
+alias tmuxcapture="tmux capture-pane -pS - > tmux_current_screen_output.txt ; echo captured current screen to tmux_current_screen_output.txt"
