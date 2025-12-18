@@ -98,6 +98,7 @@ alias chmodne600='find . -type f -not -executable -exec chmod u=rw,go= {} \\;'
 # easy rsync: --partial-dir stores and resumes interrupted downloads, works also for big files.
 # --progress show progress, -h human readable, -t preserve mod times
 alias rsy="rsync --partial-dir=.rsync-partial --progress -h -t"
+alias rsyq="rsync --partial-dir=.rsync-partial --info=stats2,progress2 -h -t"  # less spam
 alias rsynoimages='rsync --partial-dir=.rsync-partial --progress -h -t  --exclude \"*.jp*g\" --exclude \"*.JP*G\" --exclude \"*.png\" --exclude \"*.PNG\"'
 alias rsyonlyjson='rsync --partial-dir=.rsync-partial --progress -h -t --include=\"*/\" --include=\"*/json\" --exclude \"*\"'
 
