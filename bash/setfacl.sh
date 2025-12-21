@@ -9,7 +9,7 @@ function sv3_removeperms() {
   setfacl -bR "${targetdir}"
   setfacl -kR "${targetdir}"
 }
-export -f sv3_removeperms
+
 
 # the following set the permissions similar to chmod
 # as well as setting the default flags to be the same for files created in the future
@@ -25,7 +25,7 @@ function sv3_777() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_777
+
 
 function sv3_775() {
   targetdir="$1"
@@ -36,7 +36,7 @@ function sv3_775() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_775
+
 
 function sv3_770() {
   targetdir="$1"
@@ -47,7 +47,7 @@ function sv3_770() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_770
+
 
 function sv3_755() {
   targetdir="$1"
@@ -58,7 +58,7 @@ function sv3_755() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_755
+
 
 function sv3_750() {
   targetdir="$1"
@@ -69,7 +69,7 @@ function sv3_750() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_750
+
 
 function sv3_700() {
   targetdir="$1"
@@ -80,7 +80,7 @@ function sv3_700() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_700
+
 
 # these functions share folders with a specific user.
 
@@ -94,7 +94,7 @@ function sv3_readwrite_recurse() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_readwrite_recurse
+
 
 function sv3_readwrite_norecurse() {
   otheruser=$1
@@ -106,7 +106,7 @@ function sv3_readwrite_norecurse() {
   setfacl -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_readwrite_norecurse
+
 
 function sv3_readonly_recurse() {
   otheruser=$1
@@ -118,7 +118,7 @@ function sv3_readonly_recurse() {
   setfacl -R -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_readonly_recurse
+
 
 function sv3_readonly_norecurse() {
   otheruser=$1
@@ -130,4 +130,4 @@ function sv3_readonly_norecurse() {
   setfacl -m d:u:$(id -u):rwx "${targetdir}"
   getfacl "${targetdir}"
 }
-export -f sv3_readonly_norecurse
+

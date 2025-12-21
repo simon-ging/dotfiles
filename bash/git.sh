@@ -16,7 +16,7 @@ function gitlog() {
   # #  format from above, without author
   # git log --graph --oneline --date=format:"%y-%m-%d %H:%M" --format="format:%C(bold blue)%h%C(reset) %C(green)%ad%C(reset) %C(auto)%d%C(reset) %s%C(reset)" $*
 }
-export -f gitlog
+
 function gitlog2() {
   # instead use pretty format to replace oneline
   git log \
@@ -24,7 +24,7 @@ function gitlog2() {
     --date=format:'%Y-%m-%d %H:%M' $*
   # --graph --oneline --simplify-by-decoration \
 }
-export -f gitlog2
+
 alias glt="gitlog2 --graph --simplify-by-decoration" # only tagged / refed
 alias gla="gitlog2 --graph --all"                    # all branches
 alias glta="gitlog2 --graph --simplify-by-decoration --all"
@@ -46,7 +46,7 @@ function gc() {
   if [[ $# == 0 ]]; then msg="no message"; else msg="$*"; fi
   git commit -m "$msg"
 }
-export -f gc
+
 
 function gitpullall() {
   # pull all branches
@@ -60,7 +60,7 @@ function gitpullall() {
   echo "---------- going back to current branch ${current_branch}"
   git checkout $current_branch
 }
-export -f gitpullall
+
 
 alias gitfilehistory='git log -p --follow -- '
 
@@ -83,7 +83,7 @@ function gitupdateindex() {
   echo "---------- to delete overflowing files: status, C-s, V, mark, enter, move to awk"
   echo "awk '{print \$3}'"
 }
-export -f gitupdateindex
+
 
 function gitfork() {
   # create a fork, where the "fork" branch points to the forked repo, and the default branch points
@@ -151,7 +151,7 @@ function gitfork() {
   fi
   cd ..
 }
-export -f gitfork
+
 
 function gitlastchange() {
   if [[ $# -lt 1 ]]; then
@@ -161,5 +161,5 @@ function gitlastchange() {
   file="$1"
   git diff $(git rev-list -n 1 HEAD -- $file)^ -- $file
 }
-export -f gitlastchange
+
 

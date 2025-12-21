@@ -67,7 +67,7 @@ alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
 function lf() { # find + ls
   find . -maxdepth 1 -name "$@" -type f -exec ls -AlhX {} \;
 }
-export -f lf
+
 
 function grepr() {
   pattern=$1
@@ -112,7 +112,7 @@ alias bell='sleep 1 ; echo -e "\a"'
 function killallother() {
   ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps|nvitop' | awk '{print $1}' | xargs kill -9
 }
-export -f killallother
+
 
 alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
    -dPDFSETTINGS=/ebook \
