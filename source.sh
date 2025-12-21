@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -n "$BASH_SOURCE" ]; then
+  SCRIPT_SOURCE="${BASH_SOURCE[0]}"
+elif [ -n "$ZSH_VERSION" ]; then
+  SCRIPT_SOURCE="${(%):-%N}"
+else
+  SCRIPT_SOURCE="$0"
+fi
+
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd -P)"
+
+# SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/bash/00-colors.sh"
 source "$SCRIPT_DIR/bash/bash.sh"
