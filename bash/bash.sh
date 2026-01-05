@@ -108,6 +108,7 @@ alias pj="python3 -m json.tool"
 alias pt="python -m pytest"
 alias ecd='export CUDA_VISIBLE_DEVICES='
 alias bell='sleep 1 ; echo -e "\a"'
+alias black100='black --max-line-length 100'
 
 function killallother() {
   ps -u "$USER" -o pid=,comm=  | grep -vE 'grep|bash|ssh|tmux|ps|nvitop' | awk '{print $1}' | xargs kill -9
