@@ -13,6 +13,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd -P)"
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 source "$SCRIPT_DIR/bash/00-colors.sh"
+source "$SCRIPT_DIR/bash/arch.sh"
 source "$SCRIPT_DIR/bash/bash.sh"
 source "$SCRIPT_DIR/bash/conda.sh"
 source "$SCRIPT_DIR/bash/git.sh"
