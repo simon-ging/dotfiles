@@ -55,9 +55,12 @@ function sve3_775() {
   # - files -> 664 (u=rw,g=rw,o=r)
   # - files that already had any execute bit -> 775 (u=rwx,g=rwx,o=rx)
   find "$targetdir" -type d -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
+  find "$targetdir" -type f -executable -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
+  find "$targetdir" -type f -not -executable -exec setfacl -m u::rw-,g::rw-,o::r-- {} +
 
-  find "$targetdir" -type f ! -perm /111 -exec setfacl -m u::rw-,g::rw-,o::r-- {} +
-  find "$targetdir" -type f   -perm /111 -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
+  find "$targetdir" -type d -exec setfacl -m u:$(id -u):rwx {} +
+  find "$targetdir" -type f -executable -exec setfacl -m u:$(id -u):rwx {} +
+  find "$targetdir" -type f -not -executable -exec setfacl -m u:$(id -u):rw- {} +
 
   # Defaults (new items created under targetdir):
   # - dirs default -> 775
