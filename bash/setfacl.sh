@@ -58,7 +58,7 @@ function sve3_775() {
   find "$targetdir" -type f -executable -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
   find "$targetdir" -type f -not -executable -exec setfacl -m u::rw-,g::rw-,o::r-- {} +
 
-  find "$targetdir" -type d -exec setfacl -m u:$(id -u):rwx {} +
+  find "$targetdir" -type d -exec setfacl -m u:$(id -u):rwx,d:u:$(id -u):rwx {} +
   find "$targetdir" -type f -executable -exec setfacl -m u:$(id -u):rwx {} +
   find "$targetdir" -type f -not -executable -exec setfacl -m u:$(id -u):rw- {} +
 
@@ -66,11 +66,10 @@ function sve3_775() {
   # - dirs default -> 775
   # - files default -> 664
   # Note: default ACLs don't force a file to be executable; the creator/umask decides that.
-  setfacl -m d:u::rwx,d:g::rwx,d:o::r-x "$targetdir"
-  setfacl -m d:u::rw-,d:g::rw-,d:o::r-- "$targetdir"
-
+  #setfacl -m d:u::rwx,d:g::rwx,d:o::r-x "$targetdir"
+  #setfacl -m d:u::rw-,d:g::rw-,d:o::r-- "$targetdir"
   # Ensure the current user retains full access (effective + default)
-  setfacl -m u:$(id -u):rwx,d:u:$(id -u):rwx "$targetdir"
+  #setfacl -m u:$(id -u):rwx,d:u:$(id -u):rwx "$targetdir"
 
   getfacl "$targetdir"
 }
