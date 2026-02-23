@@ -38,6 +38,42 @@ function sv3_775() {
 }
 
 
+# respecting executables
+function sve3_775() {
+  local targetdir="$1"
+  if [[ -z "$targetdir" ]]; then
+    echo "Usage: cmd <directory>"
+    return 1
+  fi
+  if [[ ! -d "$targetdir" ]]; then
+    echo "Error: Directory '$targetdir' does not exist."
+    return 1
+  fi
+
+  # Existing:
+  # - dirs -> 775 (u=rwx,g=rwx,o=rx)
+  # - files -> 664 (u=rw,g=rw,o=r)
+  # - files that already had any execute bit -> 775 (u=rwx,g=rwx,o=rx)
+  find "$targetdir" -type d -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
+
+  find "$targetdir" -type f ! -perm /111 -exec setfacl -m u::rw-,g::rw-,o::r-- {} +
+  find "$targetdir" -type f   -perm /111 -exec setfacl -m u::rwx,g::rwx,o::r-x {} +
+
+  # Defaults (new items created under targetdir):
+  # - dirs default -> 775
+  # - files default -> 664
+  # Note: default ACLs don't force a file to be executable; the creator/umask decides that.
+  setfacl -m d:u::rwx,d:g::rwx,d:o::r-x "$targetdir"
+  setfacl -m d:u::rw-,d:g::rw-,d:o::r-- "$targetdir"
+
+  # Ensure the current user retains full access (effective + default)
+  setfacl -m u:$(id -u):rwx,d:u:$(id -u):rwx "$targetdir"
+
+  getfacl "$targetdir"
+}
+
+
+
 function sv3_770() {
   targetdir="$1"
   if [[ -z "${targetdir}" ]]; then echo "Usage: cmd <directory>"; return 1 ; fi
