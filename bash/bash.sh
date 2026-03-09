@@ -97,6 +97,62 @@ alias chmode700='find . -type f -executable -exec chmod u=rwx,go= {} \\;'
 alias chmodne644='find . -type f -not -executable -exec chmod u=rw,go=r {} \\;'
 alias chmodne600='find . -type f -not -executable -exec chmod u=rw,go= {} \\;'
 
+chmodsmart() {
+    local mode="$1"
+    shift
+
+    if [[ ! "$mode" =~ ^[750][750][750]$ ]]; then
+        printf 'usage: chmodsmart [750][750][750] [path ...]\n' >&2
+        return 1
+    fi
+
+    [[ $# -eq 0 ]] && set -- .
+
+    local u="${mode:0:1}"
+    local g="${mode:1:1}"
+    local o="${mode:2:1}"
+
+    local dspec="" fspec="" target
+
+    case "$u" in
+        7) dspec+="u=rwx," ;;
+        5) dspec+="u=rx,"  ;;
+        0) dspec+="u=,"    ;;
+    esac
+    case "$g" in
+        7) dspec+="g=rwx," ;;
+        5) dspec+="g=rx,"  ;;
+        0) dspec+="g=,"    ;;
+    esac
+    case "$o" in
+        7) dspec+="o=rwx" ;;
+        5) dspec+="o=rx"  ;;
+        0) dspec+="o="    ;;
+    esac
+
+    case "$u" in
+        7) fspec+="u+rw,"    ;;
+        5) fspec+="u+r,u-w," ;;
+        0) fspec+="u-rw,"    ;;
+    esac
+    case "$g" in
+        7) fspec+="g+rw,"    ;;
+        5) fspec+="g+r,g-w," ;;
+        0) fspec+="g-rw,"    ;;
+    esac
+    case "$o" in
+        7) fspec+="o+rw"     ;;
+        5) fspec+="o+r,o-w"  ;;
+        0) fspec+="o-rw"     ;;
+    esac
+
+    for target in "$@"; do
+        sudo find "$target" -type d -exec chmod "$dspec" {} +
+        sudo find "$target" -type f -exec chmod "$fspec" {} +
+    done
+}
+
+
 # ---------- rsync
 # easy rsync: --partial-dir stores and resumes interrupted downloads, works also for big files.
 # --progress show progress, -h human readable, -t preserve mod times
