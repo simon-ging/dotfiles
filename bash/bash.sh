@@ -52,6 +52,9 @@ alias toploop="while true; do top -b -n 1 | head -n 20; sleep 1; done"
 # ---------- file / disk info
 alias ..='cd ..'
 alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias ......='cd ../../../../..'
 alias countfiles='find . -type f | wc -l'
 alias countfileendings="find . -type f | awk -F '.' '{print $NF}' | sort | uniq -c"
 alias info_disk='df -h && lsblk'
