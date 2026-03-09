@@ -129,3 +129,11 @@ alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
 
 alias i3c="ipdb3 -c continue"
 
+glowstar() {
+  for f in "$@"; do
+    [[ -f "$f" ]] || continue
+    echo "-------------------- $f --------------------"
+    glow "$f"
+    echo
+  done
+}
