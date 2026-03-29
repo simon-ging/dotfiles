@@ -193,3 +193,10 @@ glowstar() {
     echo
   done
 }
+
+gitshare() {
+  sudo git -C "$1" config core.sharedRepository group
+  sudo chgrp -R oclaw "$1"
+  sudo chmod -R g+rwX "$1"
+  sudo find "$1" -type d -exec chmod g+s {} +
+}
