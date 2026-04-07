@@ -10,9 +10,6 @@ export HISTTIMEFORMAT="%Y-%m-%d %T "
 export EDITOR=vim
 umask 077 # newly created files / folders will be private
 
-# setup fuzzy find if it exists
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
-
 # setup better ls colors if configured
 if [[ -e ~/.dircolors ]]; then
   eval "$(dircolors -b ~/.dircolors)"
