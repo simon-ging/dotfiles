@@ -43,7 +43,7 @@ alias gbr='git fetch --all --tags --prune --prune-tags && git branch -a'
 alias gitdiffless='git diff --color=always | less -R'
 alias gbrso="git push -u origin HEAD"
 
-function gc() {
+function gcm() {
   if [[ $# == 0 ]]; then msg="no message"; else msg="$*"; fi
   git commit -m "$msg"
 }
