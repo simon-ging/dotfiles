@@ -4,6 +4,11 @@ archupgradeall() {
   yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@" -Syu
 }
 
+  yaystfu() {
+    sudo -v || return 1
+    yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
+  }
+
 archwhich() {
   local cmd="$1"
   if [[ -z "$cmd" ]]; then
