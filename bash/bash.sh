@@ -197,3 +197,11 @@ gitshare() {
   sudo chmod -R g+rwX "$1"
   sudo find "$1" -type d -exec chmod g+s {} +
 }
+
+alias mdformatinstall="cargo install mdformat"
+mdformatrun() {
+    local file
+    for file in "$@"; do
+        mdformat -i 4 "$file" -o "$file"
+    done
+}
