@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+alias gitlinehistory="git blame --date=format:%Y%m%d"
+
 # various aliases and functions for git
 alias diffbetter="git --no-pager diff --no-index"
 
