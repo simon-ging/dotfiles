@@ -61,6 +61,7 @@ alias duh1g='du -t 1073741824 -h -d 1 '
 alias duh100m='du -t 104857600 -h -d 1 '
 alias pwdp="readlink -f ."
 alias mactrash='find . -name ".DS_Store" -delete -or -name "._*" -delete -or -name "__MACOSX" -exec rm -rfv {} +'
+alias fdvideos='fd -HI -t f -e mp4 -e mov -e m4v -e mkv -e avi -e webm -e 3gp -e mts'
 
 alias ld='ls -AlhXdv --color=auto' # show directories
 alias ll="ls -AlhX --color=auto --time-style='+%Y-%m-%d %H:%M'"
