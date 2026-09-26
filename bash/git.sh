@@ -40,7 +40,7 @@ alias ga='git add .'
 alias gpl='git pull --no-edit'
 alias ge='git checkout'
 alias gfe='git fetch -p'
-alias gph='ga ; git commit -m autoupdate ; git push'
+alias gph='ga ; git commit -m no-message ; git push'
 alias gbr='git fetch --all --tags --prune --prune-tags && git branch -a'
 alias gitdiffless='git diff --color=always | less -R'
 alias gbrso="git push -u origin HEAD"
