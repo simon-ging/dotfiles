@@ -8,7 +8,9 @@ else
   SCRIPT_SOURCE="$0"
 fi
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd -P)"
+# not pwd -P: to resolve a physical path zsh lstat's every entry of / once it crosses a mount
+# boundary, so one dead fuse mount in / (/keybase, 2026-10-17) hung every new shell here
+SCRIPT_DIR="$(cd -- "$(dirname -- "$SCRIPT_SOURCE")" && pwd)"
 
 # SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
