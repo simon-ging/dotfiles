@@ -6,7 +6,7 @@ archupgradeall() {
 
   yaystfu() {
     sudo -v || return 1
-    yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
+    yay -S --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
   }
 
 archwhich() {
