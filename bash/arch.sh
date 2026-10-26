@@ -4,9 +4,10 @@ archupgradeall() {
   yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@" -Syu
 }
 
+  # --ask 4: --noconfirm answers no to "remove conflicting package?", this flips it to yes
   yaystfu() {
     sudo -v || return 1
-    yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
+    yay --noconfirm --ask 4 --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
   }
 
 archwhich() {
