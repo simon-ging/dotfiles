@@ -172,13 +172,24 @@ function killallother() {
 }
 
 
+# LeaveColorUnchanged: /ebook converts colors to sRGB, which fails on transparency groups
+# with ICC colors and silently drops whole figures.
 alias pdfcompressghostscript="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
-   -dPDFSETTINGS=/ebook \
+   -dPDFSETTINGS=/ebook -dColorConversionStrategy=/LeaveColorUnchanged \
    -dDownsampleColorImages=true -dColorImageResolution=150 \
    -dDownsampleGrayImages=true  -dGrayImageResolution=150 \
    -dDownsampleMonoImages=true  -dMonoImageResolution=300 \
    -dDetectDuplicateImages=true -dNOPAUSE -dBATCH -dQUIET \
    -sPAPERSIZE=a4 -dFIXEDMEDIA \
+   -sOutputFile=output_smaller.pdf"
+# for papers: keeps the original page size (US Letter would be cropped by FIXEDMEDIA a4).
+# Some PDFs still lose figures, compare the output before deleting the original.
+alias pdfcompressghostscript300="gs -sDEVICE=pdfwrite -dCompatibilityLevel=1.5 \
+   -dPDFSETTINGS=/ebook -dColorConversionStrategy=/LeaveColorUnchanged \
+   -dDownsampleColorImages=true -dColorImageResolution=300 \
+   -dDownsampleGrayImages=true  -dGrayImageResolution=300 \
+   -dDownsampleMonoImages=true  -dMonoImageResolution=300 \
+   -dDetectDuplicateImages=true -dNOPAUSE -dBATCH -dQUIET \
    -sOutputFile=output_smaller.pdf"
 
 alias i3c="ipdb3 -c continue"
