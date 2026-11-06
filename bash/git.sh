@@ -69,6 +69,57 @@ function gitpullall() {
 }
 
 
+function gitprunebranches() {
+  # list local branches whose name exists on no remote, then after a y remove their worktrees
+  # and delete them. skips branches checked out in the main worktree or in a worktree with
+  # changes or untracked files.
+  # the number in front counts commits on no remote, after deletion only the reflog keeps them
+  git fetch --all --prune || return 1
+  git worktree prune
+  local main b wt answer todo="" listing="" skipped=""
+  main=$(git worktree list --porcelain | awk 'NR == 1 {print substr($0, 10)}')
+  for b in $(git for-each-ref --format="%(refname:short)" refs/heads |
+    grep -vxF -f <(git for-each-ref --format="%(refname:lstrip=3)" refs/remotes)); do
+    wt=$(_gitbranchworktree "$main" "$b")
+    if [[ "$wt" == "$main" ]]; then
+      skipped+="$b (checked out in the main worktree)"$'\n'
+    elif [[ -n "$wt" && -n "$(git -C "$wt" status --porcelain)" ]]; then
+      skipped+="$b (changes or untracked files in $wt)"$'\n'
+    else
+      todo+="$b"$'\n'
+      listing+="$(printf "%4s %s" "$(git rev-list --count "$b" --not --remotes)" "$(git branch -vv --list "$b")")"$'\n'
+    fi
+  done
+  if [[ -n "$skipped" ]]; then
+    echo "---------- skipped"
+    printf "%s" "$skipped"
+  fi
+  if [[ -z "$todo" ]]; then
+    echo "no local branches to delete"
+    return 0
+  fi
+  echo "---------- local branches without a remote"
+  printf "%s" "$listing"
+  printf "remove their worktrees and delete them with git branch -D? [y/N] "
+  read -r answer
+  [[ "$answer" == y ]] || return 0
+  # run from the main worktree, the current folder may be one of the removed worktrees
+  for b in $(printf "%s" "$todo"); do
+    wt=$(_gitbranchworktree "$main" "$b")
+    if [[ -n "$wt" ]]; then
+      git -C "$main" worktree remove "$wt" && echo "Removed worktree $wt"
+    fi
+  done
+  printf "%s" "$todo" | xargs git -C "$main" branch -D
+}
+
+function _gitbranchworktree() {
+  # print the folder of the worktree that has branch $2 checked out, run from worktree $1
+  git -C "$1" worktree list --porcelain |
+    awk -v ref="branch refs/heads/$2" '/^worktree / {p = substr($0, 10)} $0 == ref {print p}'
+}
+
+
 alias gitfilehistory='git log -p --follow -- '
 
 function gitupdateindex() {
