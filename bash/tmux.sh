@@ -30,4 +30,15 @@ alias ta="adaptivetmux a"
 alias tn='adaptivetmux new -s $(hostname)'
 alias tx='adaptivetmux kill-window 2>/dev/null || exit'
 
+# second view of the tn session: same windows, but switches between them on its own.
+# Removed again on detach, the windows stay.
+function tg() {
+  local name=${1:-$(hostname)}
+  if ! adaptivetmux has-session -t "=$name" 2>/dev/null; then
+    echo "no tmux session named $name" >&2
+    return 1
+  fi
+  adaptivetmux new -t "=$name" \; set destroy-unattached on
+}
+
 alias tmuxcapture="tmux capture-pane -pS - > tmux_current_screen_output.txt ; echo captured current screen to tmux_current_screen_output.txt"

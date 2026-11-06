@@ -31,6 +31,7 @@ alias glt="gitlog2 --graph --simplify-by-decoration" # only tagged / refed
 alias gla="gitlog2 --graph --all"                    # all branches
 alias glta="gitlog2 --graph --simplify-by-decoration --all"
 alias gl="gitlog2 --graph -n 20"             # current branch only
+alias glb="gitlog2 --graph --boundary origin/main.." # only commits not on origin/main, plus the fork point
 alias glo="gitlog2 --graph --branches -n 20" # all local branches
 alias glof="gitlog2 --graph --branches"      # no -n
 alias glto="gitlog2 --graph --simplify-by-decoration --branches"
