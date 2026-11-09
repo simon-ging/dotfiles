@@ -140,8 +140,12 @@ function gitrebaseworktrees() (
     echo "stop: origin must have one matching fetch/push URL" >&2
     return 1
   fi
+  printf '%s: fetching origin\n' "$main"
   git fetch --quiet --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*' || return 1
-  base=$(git rev-parse --verify refs/remotes/origin/main) || return 1
+  base=$(git rev-parse --verify --quiet refs/remotes/origin/main) || {
+    printf 'stop: %s: origin/main is missing\n' "$main" >&2
+    return 1
+  }
   while IFS= read -r wt; do
     [[ "$wt" == 'worktree '* ]] || continue
     wt=${wt#worktree }
@@ -153,6 +157,7 @@ function gitrebaseworktrees() (
       printf '%s (%s): skipped main checkout\n' "$wt" "$b"
       continue
     fi
+    printf '%s (%s): checking\n' "$wt" "$b"
     if [[ "$b" != simon/* ]]; then
       echo "stop: $b in $wt does not start with simon/" >&2
       return 1
@@ -175,7 +180,10 @@ function gitrebaseworktrees() (
       return 1
     fi
     head=$(git -C "$wt" rev-parse HEAD) || return 1
-    remote_head=$(git rev-parse --verify "refs/remotes/origin/$b") || return 1
+    remote_head=$(git rev-parse --verify --quiet "refs/remotes/origin/$b") || {
+      printf 'stop: %s (%s): origin/%s is missing (deleted or never pushed)\n' "$wt" "$b" "$b" >&2
+      return 1
+    }
     if ! git merge-base --is-ancestor "$remote_head" "$head"; then
       echo "stop: origin/$b has commits missing locally" >&2
       return 1
@@ -205,6 +213,7 @@ function gitrebaseworktrees() (
       return 1
     fi
     if ! git merge-base --is-ancestor "$base" "$head"; then
+      printf '%s (%s): rebasing onto origin/main\n' "$wt" "$b"
       git -C "$wt" -c rerere.enabled=false rebase --quiet --rebase-merges --no-update-refs --no-autostash --no-fork-point --empty=stop "$base" || {
         echo "stop: rebase failed in $wt; resolve and continue there, or git rebase --abort" >&2
         return 1
@@ -215,6 +224,7 @@ function gitrebaseworktrees() (
       printf '%s (%s): up to date\n' "$wt" "$b"
       continue
     fi
+    printf '%s (%s): pushing to origin/%s\n' "$wt" "$b" "$b"
     git -C "$wt" -c remote.origin.mirror=false push --quiet --no-follow-tags --recurse-submodules=no \
       "--force-with-lease=refs/heads/${b}:${remote_head}" origin "${head}:refs/heads/$b" || {
       echo "stop: push failed for $b; its local rebase remains, later worktrees were not touched" >&2

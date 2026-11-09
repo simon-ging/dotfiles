@@ -93,7 +93,12 @@ class ShellChecks:
         self.git(self.repo, "branch", "someone/untouched", "simon/a")
         self.git(self.repo, "tag", "-a", "local-only", "-m", "local", "main")
         self.git(self.wt, "config", "rebase.autoStash", "true")
-        main_line = f"{self.repo} (main): skipped main checkout\n"
+        main_line = (
+            f"{self.repo}: fetching origin\n"
+            f"{self.repo} (main): skipped main checkout\n"
+            f"{self.wt} (simon/a): checking\n"
+            f"{later} (simon/z): checking\n"
+        )
         nested = self.wt / "nested"
         nested.mkdir()
         result = self.run_helper(nested)
@@ -101,7 +106,11 @@ class ShellChecks:
         self.assertEqual(
             result.stdout,
             main_line
+            + f"{self.wt} (simon/a): rebasing onto origin/main\n"
+            + f"{self.wt} (simon/a): pushing to origin/simon/a\n"
             + f"{self.wt} (simon/a): updated and pushed\n"
+            + f"{later} (simon/z): rebasing onto origin/main\n"
+            + f"{later} (simon/z): pushing to origin/simon/z\n"
             + f"{later} (simon/z): updated and pushed\n",
         )
         self.assertEqual(self.sha(later), self.sha(self.remote, "simon/z"))
@@ -139,6 +148,7 @@ class ShellChecks:
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertEqual(
             result.stdout,
+            f"{self.repo}: fetching origin\n"
             f"{self.repo} (main): skipped main checkout\nno worktrees to rebase\n",
         )
         self.assertEqual(result.stderr, "")
@@ -171,6 +181,13 @@ class ShellChecks:
         self.git(self.repo, "push", "origin", "--delete", "simon/a")
         result = self.run_helper()
         self.assertNotEqual(result.returncode, 0)
+        self.assertIn(f"{self.wt} (simon/a): checking", result.stdout)
+        self.assertIn(
+            f"stop: {self.wt} (simon/a): origin/simon/a is missing", result.stderr
+        )
+        self.assertNotIn("fatal:", result.stderr)
+        self.assertNotIn("rebasing", result.stdout)
+        self.assertNotIn("pushing", result.stdout)
         self.assertEqual(self.sha(self.wt), self.before)
         self.assertNotEqual(
             self.git(
@@ -178,6 +195,12 @@ class ShellChecks:
             ).returncode,
             0,
         )
+
+    def test_missing_main_names_repository(self):
+        self.git(self.remote, "update-ref", "-d", "refs/heads/main")
+        result = self.run_helper()
+        self.assert_stopped(result, f"stop: {self.repo}: origin/main is missing")
+        self.assertNotIn("fatal:", result.stderr)
 
     def test_remote_ahead_stops(self):
         other = self.root / "other"
