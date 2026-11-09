@@ -43,9 +43,19 @@ alias gpl='git pull --no-edit'
 alias gplm='git pull --no-rebase --no-edit'
 alias ge='git checkout'
 alias gfe='git fetch -p'
-alias gph='ga ; git commit -m no-message ; git push'
-alias gcl='ga ; git commit -m no-message ; git rebase --continue ; git pull --no-edit'
-alias gclm='ga ; git commit -m no-message ; git pull --no-rebase --no-edit'
+# stops the commit aliases below while a merge or rebase has unresolved files or a changed file
+# still holds conflict markers, which `ga` would otherwise stage and commit. Whitespace errors are
+# no reason to stop, so --check runs with them switched off
+function _gnoconflict() {
+  local u m
+  u=$(git ls-files -u) && [ -n "$u" ] && { echo "unresolved: $(git diff --name-only --diff-filter=U | tr '\n' ' ')" >&2; return 1; }
+  m=$(git -c core.whitespace=-blank-at-eol,-space-before-tab,-indent-with-non-tab,-tab-in-indent,-blank-at-eof,-cr-at-eol diff HEAD --check) || { echo "$m" >&2; return 1; }
+}
+alias gph='_gnoconflict && ga && { git commit -m no-message ; git push ; }'
+alias gcl='_gnoconflict && ga && { git commit -m no-message ; git rebase --continue ; git pull --no-edit ; }'
+alias gclm='_gnoconflict && ga && { git commit -m no-message ; git pull --no-rebase --no-edit ; }'
+# && not ;, so a pull that stops on a conflict is not followed by the push
+alias gclp='gcl && gph'
 alias gbr='git fetch --all --tags --prune --prune-tags && git branch -a'
 alias gitdiffless='git diff --color=always | less -R'
 alias gbrso="git push -u origin HEAD"
