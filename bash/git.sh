@@ -114,6 +114,106 @@ function gitprunebranches() {
   printf "%s" "$todo" | xargs git -C "$main" branch -D
 }
 
+function gitrebaseworktrees() (
+  # Check every worktree before rebasing; pin each lease so background fetches cannot weaken it.
+  if [[ $# != 0 ]]; then
+    echo "usage: gitrebaseworktrees" >&2
+    return 2
+  fi
+  local listing main wt b upstream head remote_head base urls gitdir state dirty
+  local -a plan=()
+  listing=$(git worktree list --porcelain) || return 1
+  main=${listing%%$'\n'*}
+  main=${main#worktree }
+  urls=$(git remote get-url --all origin) || return 1
+  if [[ "$urls" == *$'\n'* || "$urls" != "$(git remote get-url --push --all origin)" ]]; then
+    echo "stop: origin must have one matching fetch/push URL" >&2
+    return 1
+  fi
+  git fetch --quiet --no-tags --prune origin '+refs/heads/*:refs/remotes/origin/*' || return 1
+  base=$(git rev-parse --verify refs/remotes/origin/main) || return 1
+  while IFS= read -r wt; do
+    [[ "$wt" == 'worktree '* ]] || continue
+    wt=${wt#worktree }
+    b=$(git -C "$wt" symbolic-ref --quiet --short HEAD) || {
+      echo "stop: detached or unavailable worktree: $wt" >&2
+      return 1
+    }
+    if [[ "$wt" == "$main" && "$b" == main ]]; then
+      printf '%s (%s): skipped main checkout\n' "$wt" "$b"
+      continue
+    fi
+    if [[ "$b" != simon/* ]]; then
+      echo "stop: $b in $wt does not start with simon/" >&2
+      return 1
+    fi
+    gitdir=$(git -C "$wt" rev-parse --absolute-git-dir) || return 1
+    for state in rebase-merge rebase-apply MERGE_HEAD CHERRY_PICK_HEAD REVERT_HEAD sequencer BISECT_LOG index.lock; do
+      if [[ -e "$gitdir/$state" ]]; then
+        echo "stop: $b has an operation in progress ($state)" >&2
+        return 1
+      fi
+    done
+    dirty=$(git -C "$wt" status --porcelain --untracked-files=all --ignore-submodules=none) || return 1
+    if [[ -n "$dirty" ]]; then
+      echo "stop: $b has changes or untracked files in $wt" >&2
+      return 1
+    fi
+    upstream=$(git -C "$wt" for-each-ref --format='%(upstream:remotename) %(upstream:remoteref)' "refs/heads/$b") || return 1
+    if [[ "$upstream" != "origin refs/heads/$b" ]]; then
+      echo "stop: $b must track origin/$b" >&2
+      return 1
+    fi
+    head=$(git -C "$wt" rev-parse HEAD) || return 1
+    remote_head=$(git rev-parse --verify "refs/remotes/origin/$b") || return 1
+    if ! git merge-base --is-ancestor "$remote_head" "$head"; then
+      echo "stop: origin/$b has commits missing locally" >&2
+      return 1
+    fi
+    if ! git merge-base "$base" "$head" >/dev/null; then
+      echo "stop: $b and origin/main have unrelated histories" >&2
+      return 1
+    fi
+    plan+=("$wt" "$b" "$head" "$remote_head")
+  done <<< "$listing"
+
+  if (( ${#plan[@]} == 0 )); then
+    echo "no worktrees to rebase"
+    return 0
+  fi
+  set -- "${plan[@]}"
+  while (( $# )); do
+    wt=$1 b=$2 head=$3 remote_head=$4
+    shift 4
+    if [[ "$(git -C "$wt" symbolic-ref --quiet --short HEAD)" != "$b" || "$(git -C "$wt" rev-parse HEAD)" != "$head" ]]; then
+      echo "stop: branch changed during preflight in $wt" >&2
+      return 1
+    fi
+    dirty=$(git -C "$wt" status --porcelain --untracked-files=all --ignore-submodules=none) || return 1
+    if [[ -n "$dirty" ]]; then
+      echo "stop: $b changed during preflight" >&2
+      return 1
+    fi
+    if ! git merge-base --is-ancestor "$base" "$head"; then
+      git -C "$wt" -c rerere.enabled=false rebase --quiet --rebase-merges --no-update-refs --no-autostash --no-fork-point --empty=stop "$base" || {
+        echo "stop: rebase failed in $wt; resolve and continue there, or git rebase --abort" >&2
+        return 1
+      }
+    fi
+    head=$(git -C "$wt" rev-parse HEAD) || return 1
+    if [[ "$head" == "$remote_head" ]]; then
+      printf '%s (%s): up to date\n' "$wt" "$b"
+      continue
+    fi
+    git -C "$wt" -c remote.origin.mirror=false push --quiet --no-follow-tags --recurse-submodules=no \
+      "--force-with-lease=refs/heads/${b}:${remote_head}" origin "${head}:refs/heads/$b" || {
+      echo "stop: push failed for $b; its local rebase remains, later worktrees were not touched" >&2
+      return 1
+    }
+    printf '%s (%s): updated and pushed\n' "$wt" "$b"
+  done
+)
+
 function _gitbranchworktree() {
   # print the folder of the worktree that has branch $2 checked out, run from worktree $1
   git -C "$1" worktree list --porcelain |

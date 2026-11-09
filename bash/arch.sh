@@ -17,6 +17,32 @@ archwhich() {
     return 2
   fi
 
+  if alias -- "$cmd" 2>/dev/null; then
+    return 0
+  fi
+
+  local kind
+  if [[ -n "${ZSH_VERSION-}" ]]; then
+    kind=$(whence -w -- "$cmd")
+    kind=${kind##*: }
+  else
+    kind=$(type -t -- "$cmd")
+  fi
+  case "$kind" in
+    function|alias|builtin|reserved|keyword)
+      if [[ -n "${ZSH_VERSION-}" ]]; then
+        whence -v -- "$cmd"
+        [[ "$kind" != function ]] || functions -- "$cmd"
+      else
+        type -- "$cmd"
+        if [[ "$kind" == function ]]; then
+          (shopt -s extdebug; declare -F -- "$cmd")
+        fi
+      fi
+      return 0
+      ;;
+  esac
+
   local bin pkg repo inst_date helper msg
   bin="$(command -v -- "$cmd" 2>/dev/null)" || true
   if [[ -z "$bin" ]]; then
