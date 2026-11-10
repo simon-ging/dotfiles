@@ -1,13 +1,14 @@
 archupgradeall() {
   sudo pacman -Syu
   sudo -v
-  yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@" -Syu
+  # --ignore: the AUR's megacmd shares its name with MEGA's prebuilt package but compiles from source
+  yay --noconfirm --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y --ignore megacmd "$@" -Syu
 }
 
   # --ask 4: --noconfirm answers no to "remove conflicting package?", this flips it to yes
   yaystfu() {
     sudo -v || return 1
-    yay --noconfirm --ask 4 --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y "$@"
+    yay --noconfirm --ask 4 --noredownload --norebuild --answerclean n --answerdiff n --answeredit n --answerupgrade y --ignore megacmd "$@"
   }
 
 archwhich() {
